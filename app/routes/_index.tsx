@@ -1,10 +1,9 @@
 
 import type { ActionArgs, V2_MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Form, Link, isRouteErrorResponse, useActionData, useNavigation, useRouteError } from "@remix-run/react";
+import { Form, isRouteErrorResponse, useActionData, useNavigation, useRouteError } from "@remix-run/react";
 import { ArrowDownTrayIcon } from '@heroicons/react/20/solid'
 import { classNames } from "~/utils";
-import { sleep } from "~/utils.server";
 import { getCarConfiguration, toCsv } from "~/scraper/scrape.server";
 import ErrorBanner from "~/components/ErrorBanner";
 
@@ -23,7 +22,7 @@ export async function action({ request }: ActionArgs) {
   if (code.match(VALID_CODE_REGEX) == null)
     return json<FormData>({ error: "code must be 10 characters of letters and numbers", data: null }, { status: 400 })
 
-  const {jsonResponse, model, requestUrl} = await getCarConfiguration(code)
+  const {jsonResponse, model} = await getCarConfiguration(code)
   const csvData = toCsv(jsonResponse)
   // await sleep(3000)
 
@@ -51,7 +50,7 @@ export default function Index() {
 
   let plans: {grouping: string, code: string, name: string}[] = []
   if (actionData?.data) {
-    const {csvData, code, model} = actionData.data
+    const {csvData} = actionData.data
     const rows = csvData.slice(1)
     plans = rows.map(r => ({
       grouping: r[0],
