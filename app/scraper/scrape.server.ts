@@ -56,7 +56,7 @@ function walk(content: Content, res: string[][] = [], current: string[] = []): v
     let newCurrent = current.slice()
     if (curr.content != null) {
       const { name } = curr
-      newCurrent.push([...newCurrent, name].join(' --- '))
+      newCurrent = [[...newCurrent, name].join(' -- ')]
     }
     walk(curr, res, newCurrent);
   }
