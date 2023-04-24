@@ -1,4 +1,4 @@
-app = "aston-martin-configurator-6a98"
+app = "aston-martin-configurator"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = [ ]
