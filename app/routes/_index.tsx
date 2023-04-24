@@ -1,89 +1,28 @@
 
 import type { ActionArgs, V2_MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
+import { Form, Link, isRouteErrorResponse, useActionData, useNavigation, useRouteError } from "@remix-run/react";
 import { ArrowDownTrayIcon } from '@heroicons/react/20/solid'
 import { classNames } from "~/utils";
 import { sleep } from "~/utils.server";
+import { getCarConfiguration } from "~/scraper/scrape.server";
 
+const VALID_CODE_REGEX = /^\w{10,10}$/
 
 export const meta: V2_MetaFunction = () => [{ title: "Aston Martin Congiguration Parser" }];
 
 export async function action({ request }: ActionArgs) {
   const form = await request.formData();
   const code = form.get('code')
-  if (typeof code !== "string") {
+  if (typeof code !== "string")
     return json({ error: "code is not a string" }, { status: 400 })
-  }
+  if (code.match(VALID_CODE_REGEX) == null)
+    return json({ error: "code must be 10 characters" }, { status: 400 })
 
-  await sleep(3000)
+  const res = await getCarConfiguration(code)
+  // await sleep(3000)
 
-  return json([
-    {
-      id: 1,
-      name: 'Hobby',
-      memory: '4 GB RAM',
-      cpu: '4 CPUs',
-      storage: '128 GB SSD disk',
-      price: '$40',
-      isCurrent: false,
-    },
-    {
-      id: 2,
-      name: 'Startup',
-      memory: '8 GB RAM',
-      cpu: '6 CPUs',
-      storage: '256 GB SSD disk',
-      price: '$80',
-      isCurrent: true,
-    },
-    {
-      id: 2,
-      name: 'Startup',
-      memory: '8 GB RAM',
-      cpu: '6 CPUs',
-      storage: '256 GB SSD disk',
-      price: '$80',
-      isCurrent: true,
-    },
-    {
-      id: 2,
-      name: 'Startup',
-      memory: '8 GB RAM',
-      cpu: '6 CPUs',
-      storage: '256 GB SSD disk',
-      price: '$80',
-      isCurrent: true,
-    },
-    {
-      id: 2,
-      name: 'Startup',
-      memory: '8 GB RAM',
-      cpu: '6 CPUs',
-      storage: '256 GB SSD disk',
-      price: '$80',
-      isCurrent: true,
-    },
-    {
-      id: 2,
-      name: 'Startup',
-      memory: '8 GB RAM',
-      cpu: '6 CPUs',
-      storage: '256 GB SSD disk',
-      price: '$80',
-      isCurrent: true,
-    },
-    {
-      id: 2,
-      name: 'Startup',
-      memory: '8 GB RAM',
-      cpu: '6 CPUs',
-      storage: '256 GB SSD disk',
-      price: '$80',
-      isCurrent: true,
-    },
-    // More plans...
-  ])
+  return json({error: null, res})
   // const project = await createProject(body);
   // return redirect(`/projects/${project.id}`);
 }
@@ -91,6 +30,13 @@ export async function action({ request }: ActionArgs) {
 
 export default function Index() {
   const actionData = useActionData<typeof action>();
+  if (actionData?.error) {
+    console.log("error occurred")
+    console.log(actionData)
+  } else {
+    console.log(actionData)
+  }
+
   const navigation = useNavigation()
   console.log(navigation.state)
   const buttonDisabled = navigation.state === 'submitting' ? 'cursor-not-allowed bg-gray-400 hover:bg-gray-400' : ''
@@ -167,7 +113,7 @@ export default function Index() {
       <div className="relative sm:pb-16">
         <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
           <div className="relative px-4 pb-8 pt-16 sm:px-6 sm:pb-14 sm:pt-24 lg:px-8 lg:pb-20 lg:pt-20">
-            <h1 className="text-center text-6xl font-extrabold tracking-tight sm:text-4xl lg:text-4xl">
+            <h1 className="text-center text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-4xl">
               <span className="block capitalize text-yellow-500">
                 Aston Martin Congiguration Parser
               </span>
@@ -182,10 +128,11 @@ export default function Index() {
                   Enter Configurator Code
                 </label>
                 <div className="mt-1">
-                  <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-yellow-600 max-w-xs w-52">
+                  <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-yellow-600 max-w-xs w-full sm:w-56">
                     <span className="flex select-none items-center pl-3 text-gray-500 sm:text-sm">my.astnmrt.in/</span>
                     <input
                       maxLength={10}
+                      minLength={10}
                       type="text"
                       name="code"
                       id="code"
@@ -343,5 +290,17 @@ export default function Index() {
         </div>
       </div>
     </main>
+  );
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError()
+
+  console.log(error)
+
+  return (
+    <div className="error-container">
+      Something unexpected went wrong. Sorry about that.
+    </div>
   );
 }
