@@ -1,0 +1,4 @@
+{
+  "appService.defaultWebAppToDeploy": "/subscriptions/96ad0374-6fb5-4967-b5ff-f51032c2527e/resourceGroups/astonmartinRG/providers/Microsoft.Web/sites/astonmartinwebapp",
+  "appService.deploySubpath": "."
+}

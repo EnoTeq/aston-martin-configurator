@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  astonmartinconfigurator6a98:
+    image: astonmartinconfigurator6a98
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+      SESSION_SECRET: 8dcd19ac716efbcbbd55b0b3ec29c731ff8cfabc93a51577f1fb5d6d47934aff
+    ports:
+      - 8080:8080
+    ipc: host
