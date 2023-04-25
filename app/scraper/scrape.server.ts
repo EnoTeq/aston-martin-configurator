@@ -8,7 +8,7 @@ export async function getCarConfiguration(code: string): Promise<{jsonResponse: 
   const context = await browser.newContext(devices['Desktop Edge']);
   const page = await context.newPage();
 
-  const responsePromise = page.waitForResponse('https://configurator.api-services.astonmartin.com/rules/configuration/**/*')
+  const responsePromise = page.waitForResponse('**/rules/configuration/**/*')
 
   await page.goto(`https://my.astnmrt.in/${code}`);
   const response = await responsePromise;
