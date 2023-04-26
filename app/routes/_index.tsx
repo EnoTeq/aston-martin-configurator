@@ -48,14 +48,15 @@ export default function Index() {
     console.log(actionData)
   }
 
-  let plans: {grouping: string, code: string, name: string}[] = []
+  let plans: {grouping: string, code: string, meta: string, name: string}[] = []
   if (actionData?.data) {
     const {csvData} = actionData.data
     const rows = csvData.slice(1)
     plans = rows.map(r => ({
       grouping: r[0],
       code: r[1],
-      name: r[2]
+      meta: r[2],
+      name: r[3]
     }))
     console.log(actionData?.data)
   }
@@ -137,6 +138,12 @@ export default function Index() {
                 >
                   Grouping
                 </th>
+                <th
+                  scope="col"
+                  className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell"
+                >
+                  Meta
+                </th>
                 <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                   Name
                 </th>
@@ -159,6 +166,11 @@ export default function Index() {
                         {plan.grouping}
                       </span>
                     </div>
+                    <div className="mt-1 flex flex-col text-gray-500 sm:block lg:hidden">
+                      <span>
+                        {plan.meta}
+                      </span>
+                    </div>
                     {planIdx !== 0 ? <div className="absolute -top-px left-6 right-0 h-px bg-gray-200" /> : null}
                   </td>
                   <td
@@ -168,6 +180,14 @@ export default function Index() {
                     )}
                   >
                     {plan.grouping}
+                  </td>
+                  <td
+                    className={classNames(
+                      planIdx === 0 ? '' : 'border-t border-gray-200',
+                      'hidden px-3 py-3.5 text-sm text-gray-500 lg:table-cell'
+                    )}
+                  >
+                    {plan.meta}
                   </td>
                   <td
                     className={classNames(

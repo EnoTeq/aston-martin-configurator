@@ -32,15 +32,19 @@ export function toCsv(jsonResponse: ConfiguratorResult): string[][] {
   for (const group of jsonResponse.config) {
     walk(group, result, [group.name])
   }
-  const headers = ['grouping', 'code', 'name']
+  const headers = ['grouping', 'code', 'meta', 'name']
   result = [headers, ...result]
   return result
 }
 
 function walk(content: Content, res: string[][] = [], current: string[] = []): void {
   if (content.content == null && content.selected) {
-    const {code, name} = content
-    res.push([...current, code!!, name])
+    const {code, name, meta} = content
+    let metaTransformed = ''
+    if (meta != null) {
+      metaTransformed = Object.values(meta).join('-')
+    }
+    res.push([...current, code!!, metaTransformed, name])
     return
   }
 
